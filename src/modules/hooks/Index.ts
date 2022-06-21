@@ -1,2 +1,2 @@
-export * from './useDatabase'
-export * from './useLogin'
+export * from './useDatabase';
+export * from './useLogin';
