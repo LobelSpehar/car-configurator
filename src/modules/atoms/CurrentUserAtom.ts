@@ -1,12 +1,9 @@
 import { atom } from 'recoil';
 
-type AtomObject = {
-  state: boolean;
-  user: string | null;
-};
+export type UserType = boolean;
 
-export const currentUser = atom<AtomObject>({
+export const currentUser = atom<UserType>({
   key: 'currentUser',
-  default: { state: false, user: '' },
+  default: false,
   dangerouslyAllowMutability: true,
 });

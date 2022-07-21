@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { useRecoilState } from 'recoil';
-import { message } from '../../atoms/Index';
-import { useDatabase } from '../../hooks/Index';
+import { useSetRecoilState } from 'recoil';
+import { message } from 'modules/atoms/Index';
+import { useDatabase } from 'modules/hooks/Index';
 
 interface PreviewItemMenuProps {
   id: string;
@@ -11,12 +11,10 @@ interface PreviewItemMenuProps {
 
 export function PreviewItemMenu(props: PreviewItemMenuProps) {
   const [menuState, setMenuState] = useState(false);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [infoMessage, setMessage] = useRecoilState(message);
-  const { getCarList, deleteCar } = useDatabase();
+  const setMessage = useSetRecoilState(message);
+  const { deleteCar } = useDatabase();
   return (
-    <div className='float-right'>
+    <div className='relative right-0'>
       <button
         type='button'
         onClick={(e) => setMenuState(!menuState)}
@@ -47,7 +45,7 @@ export function PreviewItemMenu(props: PreviewItemMenuProps) {
       <div
         className={
           menuState
-            ? 'z-10 top-[50px] relative -right-[18px] drop-shadow-md block h-[104px] w-[200px] flex flex-col'
+            ? 'z-10 absolute right-8 top-12 drop-shadow-md block h-[104px] w-[200px] flex flex-col'
             : 'hidden'
         }
       >
@@ -69,7 +67,6 @@ export function PreviewItemMenu(props: PreviewItemMenuProps) {
             setTimeout(() => {
               setMessage({ state: false });
             }, 2500);
-            getCarList();
           }}
         >
           Delete

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { useLogin } from '../../hooks/Index';
+import { useLogin } from 'modules/hooks/Index';
 
 export function MainMenu() {
   const { logOut } = useLogin();

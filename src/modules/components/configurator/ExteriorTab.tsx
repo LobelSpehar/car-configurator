@@ -6,7 +6,7 @@ import {
   PartListItem,
   ExteriorOptions,
   Carousel,
-} from '../index';
+} from 'modules/components/index';
 
 interface ExteriorTabProps {
   data: {
@@ -23,15 +23,17 @@ export function ExteriorTab(props: ExteriorTabProps) {
 
   return (
     <>
-      <div className='w-3/4 mt-10'>
+      <div className='md:w-3/4 md:mt-10 mb-4 md:float-left'>
         <Carousel data={props.data} />
       </div>
+
       {optionsState === 'exterior' ? (
         <ExteriorOptions optionType={optionsState} onClose={setOptionsState} />
       ) : optionsState === 'wheel' ? (
         <WheelOptions optionType={optionsState} onClose={setOptionsState} />
       ) : (
-        <div className='ml-auto w-[356px]  bg-white border-l border-[#C7C7D1]'>
+        <section className='w-full md:w-[356px] md:h-screen z-0 md:fixed right-0 top-0  bg-white border-l border-[#C7C7D1] '>
+          <div className='md:h-40'></div>
           <PartListItem
             type={'exterior'}
             data={{ type: props.data.color.type }}
@@ -41,14 +43,18 @@ export function ExteriorTab(props: ExteriorTabProps) {
           <PartListItem
             type={'wheel'}
             model={props.data.model}
-            data={{ type: props.data.wheel.type, name: props.data.wheel.name }}
+            data={{
+              type: props.data.wheel.type,
+              name: props.data.wheel.name,
+            }}
             dataType={'WHEELS'}
             onSetOptions={setOptionsState}
           />
+
           <Total total={props.data.total} />
           <button
             type='button'
-            className='w-[356px] h-[68px] bg-[#1E1ED2] absolute bottom-0 '
+            className='w-full md:w-[356px] h-[68px] bg-[#1E1ED2] fixed bottom-0 right-0'
             onClick={(e) => props.onSetStep(1)}
           >
             <p className='inter text-[#FCFCFD] mx-auto w-auto '>
@@ -68,7 +74,7 @@ export function ExteriorTab(props: ExteriorTabProps) {
               </svg>
             </p>
           </button>
-        </div>
+        </section>
       )}
     </>
   );

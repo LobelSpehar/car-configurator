@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { useRecoilState } from 'recoil';
-import { message } from '../../atoms/Index';
-import { useDatabase } from '../../hooks/Index';
+import { useSetRecoilState } from 'recoil';
+import { message } from 'modules//atoms/Index';
+import { useDatabase } from 'modules//hooks/Index';
 
 interface DetailsNavbarProps {
   car: {
@@ -14,17 +14,15 @@ interface DetailsNavbarProps {
     model: string;
     wheel: object;
     interior: object;
-    id: string;
   };
   id: string;
 }
 
 export function DetailsNavbar(props: DetailsNavbarProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [infoMessage, setMessage] = useRecoilState(message);
-  const { deleteCar, getCarList } = useDatabase();
+  const setMessage = useSetRecoilState(message);
+  const { deleteCar } = useDatabase();
   return (
-    <div className='absolute pt-5 pl-10 flex top-20 left-0 w-full h-20 bg-[#fcfcfd] border border-[#C7C7D1] border-solid border-b-1'>
+    <div className='pt-5 pl-10 flex top-20 left-0 w-full h-20 bg-[#fcfcfd] border border-[#C7C7D1] border-solid border-b-1'>
       <Link to='/'>
         <svg
           className='w-[34px] h-[34px] pr-6 pt-2'
@@ -41,15 +39,15 @@ export function DetailsNavbar(props: DetailsNavbarProps) {
           />
         </svg>
       </Link>
-      <p className='tracking-[-2px]  text-[28px] text-[#9D9DAF] optician '>
+      <p className='tracking-[-2px] hidden md:block text-[28px] text-[#9D9DAF] optician '>
         {props.car.year}
       </p>
-      <p className=' pl-6 tracking-[-2px] text-[28px] text-[#2E2E38] optician '>
+      <p className=' pl-6 tracking-[-2px] hidden md:block  text-[28px] text-[#2E2E38] optician '>
         {props.car.name}
-      </p>{' '}
+      </p>
       <Link
         className='ml-auto w-30'
-        to={{ pathname: `/configurator/${props.car.id}` }}
+        to={{ pathname: `/configurator/${props.id}` }}
       >
         <button
           type='button'
@@ -66,12 +64,11 @@ export function DetailsNavbar(props: DetailsNavbarProps) {
             type='button'
             className='w-20  px-5 mr-6 h-14  pb-4 bg-white  text-[#d2341e]'
             onClick={(e) => {
-              deleteCar(props.car.id);
+              deleteCar(props.id);
               setMessage({ state: true });
               setTimeout(() => {
                 setMessage({ state: false });
               }, 2500);
-              getCarList();
             }}
           >
             Delete

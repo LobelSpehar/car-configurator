@@ -12,7 +12,7 @@ export function CarouselInterior(props: CarouselInteriorProps) {
       <img
         src={require(`assets/images/${props.data.model}/Car=${props.data.model}, Color=${props.data.interior.type}, View=${viewList[view]}.png`)}
         alt='Car exterior'
-        className='w-4/5 mx-auto mt-32 mb-8'
+        className='md:w-4/5 mx-auto mt-8 md:mt-32 mb-8'
       ></img>
       <div className='mx-auto w-auto text-center'>
         <button

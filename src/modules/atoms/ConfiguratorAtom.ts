@@ -1,19 +1,21 @@
 import { atom } from 'recoil';
 
-export interface ConfigInterface {
-  id: string;
-  name: string;
-  model: string;
-  color: { type: string; price: number };
-  wheel: { type: string; price: number; name: string };
-  interior: { type: string; price: number };
-  year: string;
-  date: string;
-  base: number;
-  total: number;
-}
+import { DbInterface } from 'modules/atoms/Index';
 
-export const configCarAtom = atom({
+export const configCarAtom = atom<DbInterface>({
   key: 'configCarAtom',
-  default: {} as ConfigInterface,
+  default: {
+    id: '',
+    data: {
+      name: '',
+      model: '',
+      color: { type: '', price: 0 },
+      wheel: { type: '', price: 0, name: '' },
+      interior: { type: '', price: 0 },
+      year: '',
+      date: '',
+      base: 0,
+      total: 0,
+    },
+  },
 });

@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilState } from 'recoil';
-import { baseState, currentUser } from 'modules/atoms/Index';
+import { SetterOrUpdater, useSetRecoilState } from 'recoil';
+import {
+  baseState,
+  currentUser,
+  DbInterface,
+  UserType,
+} from 'modules/atoms/Index';
 import 'firebase/auth';
 import {
   createUserWithEmailAndPassword,
@@ -13,66 +18,64 @@ import {
   setPersistence,
   browserLocalPersistence,
   browserSessionPersistence,
+  Unsubscribe,
 } from 'firebase/auth';
 import { auth } from '../../firebase';
 
-export const useLogin = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [user, setUser] = useRecoilState(currentUser);
-  const [error, setError] = useState('');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [database, setDatabase] = useRecoilState(baseState);
+export const useLogin: Function = () => {
+  const setUser: SetterOrUpdater<UserType> = useSetRecoilState(currentUser);
+  const [error, setError] = useState<string>('');
+  const setDatabase: SetterOrUpdater<DbInterface[]> =
+    useSetRecoilState(baseState);
+
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe: Unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        setUser({
-          state: true,
-          user: user.email,
-        });
+        setUser(true);
       } else {
-        setUser({ state: false, user: '' });
+        setUser(false);
       }
     });
+
     return () => unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const provider = new GoogleAuthProvider();
+  const provider: GoogleAuthProvider = new GoogleAuthProvider();
 
-  const signInWithGoogle = async (rememberMe: boolean) => {
+  const signInWithGoogle: Function = async (rememberMe: boolean) => {
     if (rememberMe) {
       setPersistence(auth, browserLocalPersistence).then(() => {
         signInWithPopup(auth, provider)
-          .then((userCredential) => {
-            setUser({ state: true, user: userCredential.user.email });
+          .then(() => {
+            setUser(true);
           })
-          .catch((error) => {
-            const errorMessage = error.message;
+          .catch((error: { message: string }) => {
+            const errorMessage: string = error.message;
             setError(errorMessage);
           });
       });
     } else {
       setPersistence(auth, browserSessionPersistence).then(() => {
         signInWithPopup(auth, provider)
-          .then((userCredential) => {
-            setUser({ state: true, user: userCredential.user.email });
+          .then(() => {
+            setUser(true);
           })
-          .catch((error) => {
-            const errorMessage = error.message;
+          .catch((error: { message: string }) => {
+            const errorMessage: string = error.message;
             setError(errorMessage);
           });
       });
     }
   };
 
-  const passwordResetLink = async (userEmail: string) => {
-    sendPasswordResetEmail(auth, userEmail)
-      .then((res) => {})
-      .catch((error) => {
-        const errorMessage = error.message;
+  const passwordResetLink: Function = async (userEmail: string) => {
+    sendPasswordResetEmail(auth, userEmail).catch(
+      (error: { message: string }) => {
+        const errorMessage: string = error.message;
         setError(errorMessage);
-      });
+      }
+    );
   };
-  const signUp = async (
+  const signUp: Function = async (
     email: string,
     password: string,
     rememberMe: boolean
@@ -80,28 +83,28 @@ export const useLogin = () => {
     if (rememberMe) {
       setPersistence(auth, browserLocalPersistence).then(() => {
         createUserWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            setUser({ state: true, user: userCredential.user.email });
+          .then(() => {
+            setUser(true);
           })
-          .catch((error) => {
-            const errorMessage = error.message;
+          .catch((error: { message: string }) => {
+            const errorMessage: string = error.message;
             setError(errorMessage);
           });
       });
     } else {
       setPersistence(auth, browserSessionPersistence).then(() => {
         createUserWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            setUser({ state: true, user: userCredential.user.email });
+          .then(() => {
+            setUser(true);
           })
-          .catch((error) => {
-            const errorMessage = error.message;
+          .catch((error: { message: string }) => {
+            const errorMessage: string = error.message;
             setError(errorMessage);
           });
       });
     }
   };
-  const logIn = async (
+  const logIn: Function = async (
     email: string,
     password: string,
     rememberMe: boolean
@@ -109,34 +112,35 @@ export const useLogin = () => {
     if (rememberMe) {
       setPersistence(auth, browserLocalPersistence).then(() => {
         signInWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            setUser({ state: true, user: userCredential.user.email });
+          .then(() => {
+            setUser(true);
           })
-          .catch((error) => {
-            const errorMessage = error.message;
+          .catch((error: { message: string }) => {
+            const errorMessage: string = error.message;
             setError(errorMessage);
           });
       });
     } else {
       setPersistence(auth, browserSessionPersistence).then(() => {
         signInWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            setUser({ state: true, user: userCredential.user.email });
+          .then(() => {
+            setUser(true);
           })
-          .catch((error) => {
-            const errorMessage = error.message;
+          .catch((error: { message: string }) => {
+            const errorMessage: string = error.message;
             setError(errorMessage);
           });
       });
     }
   };
-  const logOut = async () => {
-    setDatabase([]);
-    setUser({ state: false, user: null });
+  const logOut: Function = async () => {
     signOut(auth)
-      .then(() => {})
-      .catch((error) => {
-        const errorMessage = error.message;
+      .then(() => {
+        setDatabase([]);
+        setUser(false);
+      })
+      .catch((error: { message: string }) => {
+        const errorMessage: string = error.message;
         setError(errorMessage);
       });
   };

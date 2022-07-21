@@ -5,7 +5,7 @@ import {
   PartListItem,
   InteriorOptions,
   CarouselInterior,
-} from '../index';
+} from 'modules/components/index';
 
 interface InteriorTabProps {
   data: {
@@ -20,13 +20,14 @@ export function InteriorTab(props: InteriorTabProps) {
   const [optionsState, setOptionsState] = useState('');
   return (
     <>
-      <div className='w-3/4 mt-10'>
+      <div className='md:w-3/4 md:mt-10 md:float-left'>
         <CarouselInterior data={props.data} />
       </div>
       {optionsState === 'interior' ? (
         <InteriorOptions optionType={optionsState} onClose={setOptionsState} />
       ) : (
-        <div className='ml-auto w-[356px] bg-white border-l border-[#C7C7D1]'>
+        <section className='w-full md:w-[356px] md:h-screen z-0 bg-white border-l border-[#C7C7D1] md:fixed right-0 top-0 '>
+          <div className='md:h-40'></div>{' '}
           <PartListItem
             type={'interior'}
             data={{
@@ -39,7 +40,7 @@ export function InteriorTab(props: InteriorTabProps) {
           <Total total={props.data.total} />
           <button
             type='button'
-            className='w-[356px] h-[68px] bg-[#1E1ED2] absolute bottom-0 '
+            className='w-full md:w-[356px] h-[68px] bg-[#1E1ED2] fixed right-0 bottom-0 '
             onClick={(e) => props.onSetStep(2)}
           >
             <p className='inter text-[#FCFCFD] mx-auto w-22 '>
@@ -59,7 +60,7 @@ export function InteriorTab(props: InteriorTabProps) {
               </svg>
             </p>
           </button>
-        </div>
+        </section>
       )}
     </>
   );

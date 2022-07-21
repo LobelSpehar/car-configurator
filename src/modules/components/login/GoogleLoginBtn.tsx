@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useLogin } from '../../hooks/Index';
+import { useLogin } from 'modules/hooks/Index';
 
 interface GoogleLoginBtndProps {
   rememberMe: boolean;

@@ -10,7 +10,7 @@ export function ShowPassword(props: ShowPasswordProps) {
     <button
       type='button'
       onClick={(e) => props.onSetShowPassword(!props.showPassword)}
-      className='translate-x-[490px] -translate-y-8'
+      className='my-2'
     >
       {props.showPassword ? (
         <svg

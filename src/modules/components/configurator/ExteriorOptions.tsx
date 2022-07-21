@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { configCarAtom } from 'modules/atoms/Index';
-import { Total, SelectedTick } from '../index';
+import { configCarAtom, type ColorTypes } from 'modules/atoms/Index';
+import { Total, SelectedTick } from 'modules/components/index';
 
 interface ExteriorOptionsProps {
   onClose: Function;
@@ -10,57 +10,71 @@ interface ExteriorOptionsProps {
 }
 
 export function ExteriorOptions(props: ExteriorOptionsProps) {
-  const colorOptions = [
+  const colorOptions: Array<{
+    model: string;
+    colors: ColorTypes[];
+  }> = [
     {
       model: 'RS5',
       colors: [
-        { name: 'Nardo Gay', price: 400 },
-        { name: 'Tango Red', price: 450 },
-        { name: 'Turbo Blue', price: 500 },
+        { type: 'Nardo Gay', price: 400 },
+        { type: 'Tango Red', price: 450 },
+        { type: 'Turbo Blue', price: 500 },
       ],
     },
     {
       model: 'RS6',
       colors: [
-        { name: 'Pola White', price: 550 },
-        { name: 'Ultra Blue', price: 600 },
-        { name: 'Black', price: 525 },
+        { type: 'Pola White', price: 550 },
+        { type: 'Ultra Blue', price: 600 },
+        { type: 'Black', price: 525 },
       ],
     },
     {
       model: 'e-tron',
       colors: [
-        { name: 'Florett Silver', price: 475 },
-        { name: 'Tactical Green', price: 425 },
+        { type: 'Florett Silver', price: 475 },
+        { type: 'Tactical Green', price: 425 },
       ],
     },
   ];
-  const [configCar, setConfigCar] = useRecoilState(configCarAtom);
-  const [currentState, setCurrentState] = useState({ type: '', price: 0 });
+  const [config, setConfigCar] = useRecoilState(configCarAtom);
+  const configCar = config.data;
+
+  const [currentState, setCurrentState] = useState<ColorTypes>({
+    type: '',
+    price: 0,
+  });
   useEffect(() => {
-    setCurrentState({
-      type: configCar.color.type,
-      price: configCar.color.price,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setCurrentState(configCar.color);
   }, []);
   return (
-    <>
-      <div className='ml-auto h-full pb-20 -translate-y-20 w-[356px] bg-white border-l border-[#C7C7D1]'>
-        <p className='float-left ml-10 mt-7 mb-16 text-2xl text-[#2E2E38] inter'>
+    <section className='w-full md:w-[356px] md:h-screen z-20 md:fixed right-0 top-0  bg-white border-l border-[#C7C7D1]'>
+      <div className=' pb-20 md:relative top-20 md:w-[356px] bg-white border-l border-[#C7C7D1]'>
+        <h2 className='float-left ml-10 mt-7 md:mb-16 text-2xl text-[#2E2E38] inter'>
           Paint Color
-        </p>
+        </h2>
         <button
           onClick={(e) => {
             setConfigCar((prevState) => ({
-              ...prevState,
-              color: { type: currentState.type, price: currentState.price },
-              total:
-                configCar.base +
-                currentState.price +
-                configCar.wheel.price +
-                configCar.interior.price,
+              id: prevState.id,
+              data: {
+                name: prevState.data.name,
+                model: prevState.data.model,
+                wheel: prevState.data.wheel,
+                interior: prevState.data.interior,
+                year: prevState.data.year,
+                date: prevState.data.date,
+                base: prevState.data.base,
+                color: currentState,
+                total:
+                  configCar.base +
+                  currentState.price +
+                  configCar.wheel.price +
+                  configCar.interior.price,
+              },
             }));
+
             props.onClose('');
           }}
           className='float-right mt-7 mr-8'
@@ -78,52 +92,75 @@ export function ExteriorOptions(props: ExteriorOptionsProps) {
             />
           </svg>
         </button>
-        {colorOptions
-          .filter((item) => item.model === configCar.model)[0]
-          .colors.map((item) => (
-            <div
-              key={item.name}
-              onClick={(e) => {
-                setConfigCar((prevState) => ({
-                  ...prevState,
-                  color: { type: item.name, price: item.price },
-                  total:
-                    configCar.base +
-                    item.price +
-                    configCar.wheel.price +
-                    configCar.interior.price,
-                }));
-              }}
-              className='w-full h-auto pl-10 pb-3 mt-3 flex hover:bg-[#f1f1f4] hover:border-[#c7c7d1] border-y hover:cursor-pointer border-solid border-transparent'
-            >
-              <img
-                src={require(`assets/images/exterior/Color=${item.name}.png`)}
-                alt='Color'
-                className='w-[60px] h-[60px] rounded-full mt-4'
-              ></img>
+        <ul className='mb-20'>
+          {colorOptions
+            .filter(
+              (item: { model: string; colors: ColorTypes[] }) =>
+                item.model === configCar.model
+            )[0]
+            .colors.map((item: ColorTypes) => (
+              <li key={item.type}>
+                <button
+                  className='w-full '
+                  onClick={(e) => {
+                    setConfigCar((prevState) => ({
+                      id: prevState.id,
+                      data: {
+                        name: prevState.data.name,
+                        model: prevState.data.model,
+                        wheel: prevState.data.wheel,
+                        interior: prevState.data.interior,
+                        year: prevState.data.year,
+                        date: prevState.data.date,
+                        base: prevState.data.base,
+                        color: item,
+                        total:
+                          configCar.base +
+                          item.price +
+                          configCar.wheel.price +
+                          configCar.interior.price,
+                      },
+                    }));
+                  }}
+                >
+                  <div className='w-full h-auto pl-10 pb-3 mt-3 flex hover:bg-[#f1f1f4] hover:border-[#c7c7d1] border-y hover:cursor-pointer border-solid border-transparent'>
+                    <img
+                      src={require(`assets/images/exterior/Color=${item.type}.png`)}
+                      alt='Color'
+                      className='w-[60px] h-[60px] rounded-full mt-4'
+                    ></img>
 
-              {item.name === configCar.color.type ? <SelectedTick /> : null}
+                    {item.type === configCar.color.type ? (
+                      <SelectedTick />
+                    ) : null}
 
-              {item.name === configCar.color.type ? (
-                <div>
-                  <p className='inter text-[#2E2E38] ml-6 mt-6'>{item.name}</p>
-                  <p className='inter text-[#73738C] ml-6 text-sm'>
-                    {new Intl.NumberFormat('de-DE', {
-                      style: 'currency',
-                      currency: 'EUR',
-                    }).format(item.price)}
-                  </p>
-                </div>
-              ) : (
-                <p className='inter text-[#2E2E38] ml-6 mt-8'>{item.name}</p>
-              )}
-            </div>
-          ))}
+                    {item.type === configCar.color.type ? (
+                      <div>
+                        <p className='inter text-[#2E2E38] text-left ml-6 mt-6'>
+                          {item.type}
+                        </p>
+                        <p className='inter text-[#73738C] text-left ml-6 text-sm'>
+                          {new Intl.NumberFormat('de-DE', {
+                            style: 'currency',
+                            currency: 'EUR',
+                          }).format(item.price)}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className='inter text-left text-[#2E2E38] ml-6 mt-8'>
+                        {item.type}
+                      </p>
+                    )}
+                  </div>
+                </button>
+              </li>
+            ))}
+        </ul>
       </div>
       <Total total={configCar.total} />
       <button
         type='button'
-        className='w-[356px] h-[68px] bg-[#1E1ED2] absolute bottom-0 right-0'
+        className='w-full md:w-[356px] h-[68px] bg-[#1E1ED2] fixed bottom-0 right-0'
         onClick={(e) => props.onClose('')}
       >
         <p className='inter text-[#FCFCFD] mx-auto w-22 '>
@@ -143,6 +180,6 @@ export function ExteriorOptions(props: ExteriorOptionsProps) {
           </svg>
         </p>
       </button>
-    </>
+    </section>
   );
 }

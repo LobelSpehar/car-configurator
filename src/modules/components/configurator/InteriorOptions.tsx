@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { configCarAtom } from 'modules/atoms/Index';
-import { Total, SelectedTick } from '../index';
+import { configCarAtom, type InteriorTypes } from 'modules/atoms/Index';
+import { Total, SelectedTick } from 'modules/components/index';
 
 interface InteriorOptionsProps {
   onClose: Function;
@@ -10,56 +10,68 @@ interface InteriorOptionsProps {
 }
 
 export function InteriorOptions(props: InteriorOptionsProps) {
-  const colorOptions = [
+  const colorOptions: Array<{
+    model: string;
+    colors: InteriorTypes[];
+  }> = [
     {
       model: 'RS5',
       colors: [
-        { name: 'Black&grey', price: 1000 },
-        { name: 'Black&red', price: 950 },
-        { name: 'Lunar Silver', price: 1050 },
+        { type: 'Black&grey', price: 1000 },
+        { type: 'Black&red', price: 950 },
+        { type: 'Lunar Silver', price: 1050 },
       ],
     },
     {
       model: 'RS6',
       colors: [
-        { name: 'Black&grey', price: 1200 },
-        { name: 'Black&red', price: 1150 },
-        { name: 'Brown', price: 1100 },
+        { type: 'Black&grey', price: 1200 },
+        { type: 'Black&red', price: 1150 },
+        { type: 'Brown', price: 1100 },
       ],
     },
     {
       model: 'e-tron',
       colors: [
-        { name: 'Black', price: 1400 },
-        { name: 'Red', price: 1500 },
+        { type: 'Black', price: 1400 },
+        { type: 'Red', price: 1500 },
       ],
     },
   ];
-  const [configCar, setConfigCar] = useRecoilState(configCarAtom);
-  const [currentColor, setCurrentColor] = useState({ type: '', price: 0 });
+  const [config, setConfigCar] = useRecoilState(configCarAtom);
+  const configCar = config.data;
+  const [currentColor, setCurrentColor] = useState<InteriorTypes>({
+    type: '',
+    price: 0,
+  });
   useEffect(() => {
-    setCurrentColor({
-      type: configCar.interior.type,
-      price: configCar.interior.price,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setCurrentColor(configCar.interior);
   }, []);
   return (
-    <>
-      <div className='ml-auto h-full pb-20 -translate-y-20 w-[356px] bg-white border-l border-[#C7C7D1]'>
-        <p className='float-left ml-10 mt-7 mb-16 text-2xl text-[#2E2E38] inter'>
+    <section className='w-full md:w-[356px] md:h-screen z-20 md:fixed right-0 top-0  bg-white border-l border-[#C7C7D1]'>
+      <div className=' pb-20  md:relative top-20 md:w-[356px] bg-white border-l border-[#C7C7D1]'>
+        <h2 className='float-left ml-10 mt-7 md:mb-16 text-2xl text-[#2E2E38] inter'>
           Color
-        </p>
+        </h2>
         <button
           onClick={(e) => {
             setConfigCar((prevState) => ({
-              ...prevState,
-              interior: { type: currentColor.type, price: currentColor.price },
-              total:
-                configCar.base +
-                configCar.color.price +
-                configCar.wheel.price +
-                currentColor.price,
+              id: prevState.id,
+              data: {
+                name: prevState.data.name,
+                model: prevState.data.model,
+                wheel: prevState.data.wheel,
+                color: prevState.data.color,
+                year: prevState.data.year,
+                date: prevState.data.date,
+                base: prevState.data.base,
+                interior: currentColor,
+                total:
+                  configCar.base +
+                  configCar.color.price +
+                  configCar.wheel.price +
+                  currentColor.price,
+              },
             }));
             props.onClose('');
           }}
@@ -78,51 +90,74 @@ export function InteriorOptions(props: InteriorOptionsProps) {
             />
           </svg>
         </button>
-        {colorOptions
-          .filter((item) => item.model === configCar.model)[0]
-          .colors.map((item) => (
-            <div
-              key={item.name}
-              onClick={(e) => {
-                setConfigCar((prevState) => ({
-                  ...prevState,
-                  interior: { type: item.name, price: item.price },
-                  total:
-                    configCar.base +
-                    configCar.color.price +
-                    configCar.wheel.price +
-                    item.price,
-                }));
-              }}
-              className='w-full h-auto pl-10 pb-3 mt-3 flex hover:bg-[#f1f1f4] hover:border-[#c7c7d1] border-y hover:cursor-pointer border-solid border-transparent'
-            >
-              <img
-                src={require(`assets/images/interior/Color=${item.name}.png`)}
-                alt='Color'
-                className='w-[60px] h-[60px] rounded-full mt-4'
-              ></img>
+        <ul className='mb-20'>
+          {colorOptions
+            .filter(
+              (item: { model: string; colors: InteriorTypes[] }) =>
+                item.model === configCar.model
+            )[0]
+            .colors.map((item: InteriorTypes) => (
+              <li key={item.type}>
+                <button
+                  onClick={(e) => {
+                    setConfigCar((prevState) => ({
+                      id: prevState.id,
+                      data: {
+                        name: prevState.data.name,
+                        model: prevState.data.model,
+                        wheel: prevState.data.wheel,
+                        color: prevState.data.color,
+                        year: prevState.data.year,
+                        date: prevState.data.date,
+                        base: prevState.data.base,
+                        interior: item,
+                        total:
+                          configCar.base +
+                          configCar.color.price +
+                          configCar.wheel.price +
+                          item.price,
+                      },
+                    }));
+                  }}
+                  className='w-full'
+                >
+                  <div className='w-full h-auto pl-10 pb-3 mt-3 flex hover:bg-[#f1f1f4] hover:border-[#c7c7d1] border-y hover:cursor-pointer border-solid border-transparent'>
+                    <img
+                      src={require(`assets/images/interior/Color=${item.type}.png`)}
+                      alt='Color'
+                      className='w-[60px] h-[60px] rounded-full mt-4'
+                    ></img>
 
-              {item.name === configCar.interior.type ? <SelectedTick /> : null}
-              {item.name === configCar.interior.type ? (
-                <div>
-                  <p className='inter text-[#2E2E38] ml-6 mt-6'>{item.name}</p>
-                  <p className='inter text-[#73738C] ml-6 text-sm'>
-                    {new Intl.NumberFormat('de-DE', {
-                      style: 'currency',
-                      currency: 'EUR',
-                    }).format(item.price)}
-                  </p>
-                </div>
-              ) : (
-                <p className='inter text-[#2E2E38] ml-6 mt-8'>{item.name}</p>
-              )}
-            </div>
-          ))}
+                    {item.type === configCar.interior.type ? (
+                      <SelectedTick />
+                    ) : null}
+                    {item.type === configCar.interior.type ? (
+                      <div>
+                        <p className='inter text-left text-[#2E2E38] ml-6 mt-6'>
+                          {item.type}
+                        </p>
+                        <p className='inter text-left text-[#73738C] ml-6 text-sm'>
+                          {new Intl.NumberFormat('de-DE', {
+                            style: 'currency',
+                            currency: 'EUR',
+                          }).format(item.price)}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className='inter text-left text-[#2E2E38] ml-6 mt-8'>
+                        {item.type}
+                      </p>
+                    )}
+                  </div>
+                </button>
+              </li>
+            ))}
+        </ul>
       </div>
       <Total total={configCar.total} />
       <button
         type='button'
-        className='w-[356px] h-[68px] bg-[#1E1ED2] absolute bottom-0 right-0'
+        className='w-full md:w-[356px] h-[68px] bg-[#1E1ED2] fixed bottom-0 right-0'
         onClick={(e) => props.onClose('')}
       >
         <p className='inter text-[#FCFCFD] mx-auto w-22 '>
@@ -142,6 +177,6 @@ export function InteriorOptions(props: InteriorOptionsProps) {
           </svg>
         </p>
       </button>
-    </>
+    </section>
   );
 }

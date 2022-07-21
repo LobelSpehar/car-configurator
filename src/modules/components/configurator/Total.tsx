@@ -6,7 +6,7 @@ interface TotalProps {
 
 export function Total(props: TotalProps) {
   return (
-    <div className='w-[356px] h-16 bg-white border-l border-[#C7C7D1] absolute bottom-16 right-0'>
+    <div className='w-full md:w-[356px] md:h-16 bg-white border-l border-[#C7C7D1] fixed bottom-16 right-0'>
       <p className='text-[#9D9DAF] pl-10 text-xs w-12 mt-2 inter float-left'>
         TOTAL
         <svg
@@ -23,7 +23,7 @@ export function Total(props: TotalProps) {
           />
         </svg>
       </p>
-      <p className='inter text-xl float-right text-[#2E2E38] pr-10'>
+      <p className='inter md:text-xl float-right text-[#2E2E38] pr-6 md:pr-10'>
         {new Intl.NumberFormat('de-DE', {
           style: 'currency',
           currency: 'EUR',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { MainMenu } from '../index';
+import { MainMenu } from 'modules/components/index';
 
 interface NavbarProps {
   hideMenuBtn?: boolean;
@@ -12,7 +12,7 @@ export function Navbar(props: NavbarProps) {
   const [menuState, setMenuState] = useState(false);
 
   return (
-    <div className='relative top-0 left-0 w-full h-20 bg-[#2E2E38]'>
+    <nav className='relative z-30 top-0 left-0 w-full h-20 bg-[#2E2E38]'>
       <div className='absolute w-20 h-20 top-[28px] text-center left-[51px]'>
         <svg
           width='18'
@@ -48,11 +48,11 @@ export function Navbar(props: NavbarProps) {
       )}
       <div className={props.homeState ? 'block' : 'hidden'}>
         <Link to='/selection'>
-          <button className='inter float-right mt-6 mr-10 border-solid border border-[#505062] text-white font-bold w-[132px] h-8 text-xs'>
+          <button className='inter float-right mt-6 mr-2 sm:mr-10 border-solid border border-[#505062] text-white font-bold w-[132px] h-8 text-xs'>
             Configure a car
           </button>
         </Link>
       </div>
-    </div>
+    </nav>
   );
 }

@@ -12,7 +12,7 @@ export function Carousel(props: CarouselProps) {
       <img
         src={require(`assets/images/${props.data.model}/View=${viewList[view]}, Color=${props.data.color.type}, Wheel Style=${props.data.wheel.type}.png`)}
         alt='Car exterior'
-        className='w-3/5 mx-auto mt-32 mb-8'
+        className='md:w-3/5 mx-auto mt-6 md:mt-32 mb-8'
       ></img>
       <div className='mx-auto w-auto text-center'>
         <button

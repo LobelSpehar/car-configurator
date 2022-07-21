@@ -6,7 +6,7 @@ import {
   LoginForm,
   ForgotPassword,
   GoogleLoginBtn,
-} from '../modules/components/index';
+} from 'modules/components/index';
 
 export function Login() {
   const [loginType, setLoginType] = useState('login');
@@ -14,9 +14,7 @@ export function Login() {
 
   return (
     <div className='w-full h-full'>
-      <div className='w-full h-20'>
-        <Navbar homeState={false} hideMenuBtn={true} />
-      </div>
+      <Navbar homeState={false} hideMenuBtn={true} />
 
       {loginType === 'signup' ? (
         <RegisterForm

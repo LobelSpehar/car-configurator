@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { configCarAtom } from 'modules/atoms/Index';
-import { Total, SelectedTick } from '../index';
+import { configCarAtom, type WheelTypes } from 'modules/atoms/Index';
+import { Total, SelectedTick } from 'modules/components/index';
 
 interface WheelOptionsProps {
   onClose: Function;
@@ -10,7 +10,10 @@ interface WheelOptionsProps {
 }
 
 export function WheelOptions(props: WheelOptionsProps) {
-  const wheelOptions = [
+  const wheelOptions: Array<{
+    model: string;
+    wheel: WheelTypes[];
+  }> = [
     {
       model: 'RS5',
       wheel: [
@@ -33,40 +36,41 @@ export function WheelOptions(props: WheelOptionsProps) {
       ],
     },
   ];
-  const [configCar, setConfigCar] = useRecoilState(configCarAtom);
-  const [currentWheel, setCurrentWheel] = useState({
+  const [config, setConfigCar] = useRecoilState(configCarAtom);
+  const configCar = config.data;
+  const [currentWheel, setCurrentWheel] = useState<WheelTypes>({
     type: '',
     price: 0,
     name: '',
   });
   useEffect(() => {
-    setCurrentWheel({
-      type: configCar.wheel.type,
-      price: configCar.wheel.price,
-      name: configCar.wheel.name,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setCurrentWheel(configCar.wheel);
   }, []);
   return (
-    <>
-      <div className='ml-auto h-full pb-20 -translate-y-20 w-[356px] bg-white border-l border-[#C7C7D1]'>
-        <p className='float-left ml-10 mt-7 mb-16 text-2xl text-[#2E2E38] inter'>
-          Paint Color
-        </p>
+    <section className='w-full md:w-[356px] md:h-screen z-20 md:fixed right-0 top-0  bg-white border-l border-[#C7C7D1]'>
+      <div className='pb-20 md:relative top-20 md:w-[356px] bg-white border-l border-[#C7C7D1]'>
+        <h2 className='float-left ml-10 mt-7 md:mb-16 text-2xl text-[#2E2E38] inter'>
+          Wheels
+        </h2>
         <button
           onClick={(e) => {
             setConfigCar((prevState) => ({
-              ...prevState,
-              wheel: {
-                type: currentWheel.type,
-                price: currentWheel.price,
-                name: currentWheel.name,
+              id: prevState.id,
+              data: {
+                name: prevState.data.name,
+                model: prevState.data.model,
+                color: prevState.data.color,
+                interior: prevState.data.interior,
+                year: prevState.data.year,
+                date: prevState.data.date,
+                base: prevState.data.base,
+                wheel: currentWheel,
+                total:
+                  configCar.base +
+                  configCar.color.price +
+                  currentWheel.price +
+                  configCar.interior.price,
               },
-              total:
-                configCar.base +
-                configCar.color.price +
-                currentWheel.price +
-                configCar.interior.price,
             }));
             props.onClose('');
           }}
@@ -85,55 +89,74 @@ export function WheelOptions(props: WheelOptionsProps) {
             />
           </svg>
         </button>
-        {wheelOptions
-          .filter((item) => item.model === configCar.model)[0]
-          .wheel.map((item) => (
-            <div
-              key={item.type}
-              onClick={(e) => {
-                setConfigCar((prevState) => ({
-                  ...prevState,
-                  wheel: {
-                    type: item.type,
-                    price: item.price,
-                    name: item.name,
-                  },
-                  total:
-                    configCar.base +
-                    configCar.color.price +
-                    item.price +
-                    configCar.interior.price,
-                }));
-              }}
-              className='w-full h-auto pl-10 pb-3 mt-3 flex hover:bg-[#f1f1f4] hover:border-[#c7c7d1] border-y hover:cursor-pointer border-solid border-transparent'
-            >
-              <img
-                src={require(`assets/images/wheel/Car=${configCar.model}, Style=${item.type}.png`)}
-                alt='Color'
-                className='w-[60px] h-[60px] rounded-full mt-4'
-              ></img>
+        <ul className='pb-20'>
+          {wheelOptions
+            .filter(
+              (item: { model: string; wheel: WheelTypes[] }) =>
+                item.model === configCar.model
+            )[0]
+            .wheel.map((item: WheelTypes) => (
+              <li key={item.type}>
+                <button
+                  className='w-full'
+                  onClick={(e) => {
+                    setConfigCar((prevState) => ({
+                      id: prevState.id,
+                      data: {
+                        name: prevState.data.name,
+                        model: prevState.data.model,
+                        color: prevState.data.color,
+                        interior: prevState.data.interior,
+                        year: prevState.data.year,
+                        date: prevState.data.date,
+                        base: prevState.data.base,
+                        wheel: item,
+                        total:
+                          configCar.base +
+                          configCar.color.price +
+                          item.price +
+                          configCar.interior.price,
+                      },
+                    }));
+                  }}
+                >
+                  <div className='w-full h-auto pl-10 pb-3 mt-3 flex hover:bg-[#f1f1f4] hover:border-[#c7c7d1] border-y hover:cursor-pointer border-solid border-transparent'>
+                    <img
+                      src={require(`assets/images/wheel/Car=${configCar.model}, Style=${item.type}.png`)}
+                      alt='Color'
+                      className='w-[60px] h-[60px] rounded-full mt-4'
+                    ></img>
 
-              {item.type === configCar.wheel.type ? <SelectedTick /> : null}
-              {item.type === configCar.wheel.type ? (
-                <div>
-                  <p className='inter text-[#2E2E38] ml-6 mt-6'>{item.name}</p>
-                  <p className='inter text-[#73738C] ml-6 text-sm'>
-                    {new Intl.NumberFormat('de-DE', {
-                      style: 'currency',
-                      currency: 'EUR',
-                    }).format(item.price)}
-                  </p>
-                </div>
-              ) : (
-                <p className='inter text-[#2E2E38] ml-6 mt-8'>{item.name}</p>
-              )}
-            </div>
-          ))}
+                    {item.type === configCar.wheel.type ? (
+                      <SelectedTick />
+                    ) : null}
+                    {item.type === configCar.wheel.type ? (
+                      <div>
+                        <p className='inter text-left text-[#2E2E38] ml-6 mt-6'>
+                          {item.name}
+                        </p>
+                        <p className='inter text-left text-[#73738C] ml-6 text-sm'>
+                          {new Intl.NumberFormat('de-DE', {
+                            style: 'currency',
+                            currency: 'EUR',
+                          }).format(item.price)}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className='inter text-left text-[#2E2E38] ml-6 mt-8'>
+                        {item.name}
+                      </p>
+                    )}
+                  </div>
+                </button>
+              </li>
+            ))}
+        </ul>
       </div>
       <Total total={configCar.total} />
       <button
         type='button'
-        className='w-[356px] h-[68px] bg-[#1E1ED2] absolute bottom-0 right-0'
+        className='w-full md:w-[356px] h-[68px] bg-[#1E1ED2] fixed bottom-0 right-0'
         onClick={(e) => props.onClose('')}
       >
         <p className='inter text-[#FCFCFD] mx-auto w-22 '>
@@ -153,6 +176,6 @@ export function WheelOptions(props: WheelOptionsProps) {
           </svg>
         </p>
       </button>
-    </>
+    </section>
   );
 }

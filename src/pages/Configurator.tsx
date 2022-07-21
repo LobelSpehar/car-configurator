@@ -1,26 +1,25 @@
 import React, { useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { configCarAtom } from '../modules/atoms/Index';
+import { configCarAtom } from 'modules/atoms/Index';
 import {
   ConfigNavbar,
   InteriorTab,
   Navbar,
   ExteriorTab,
   Summary,
-} from '../modules/components/index';
+} from 'modules/components/index';
 
 export function Configurator() {
-  const data = useRecoilValue(configCarAtom);
+  const config = useRecoilValue(configCarAtom);
+  const data = config.data;
   const [stepCount, setStep] = useState(0);
 
   return (
-    <div className='w-full h-screen flex'>
-      <div className='w-full h-20 absolute'>
-        <Navbar homeState={false} />
-      </div>
+    <div className='w-full h-screen'>
+      <Navbar homeState={false} />
       <ConfigNavbar stepCount={stepCount} onSetStep={setStep} data={data} />
-      <div className='w-full grow flex mt-40'>
+      <div className='w-full'>
         {stepCount === 0 ? (
           <ExteriorTab
             data={{
@@ -41,7 +40,7 @@ export function Configurator() {
             onSetStep={setStep}
           />
         ) : (
-          <Summary data={data} onSetStep={setStep} />
+          <Summary car={{ id: config.id, data: data }} onSetStep={setStep} />
         )}
       </div>
     </div>
